@@ -1,0 +1,22 @@
+[Unit]
+Description=Nokia SMS server (operator logos and ringtones by SMS)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -I /opt/nokia-sms-tools/server/nokia_sms_server.py
+# the settings (and the password in them) stay readable by root only; systemd hands the service a copy
+LoadCredential=config.ini:/etc/nokia-sms/config.ini
+Environment=NOKIA_SMS_CONFIG=%d/config.ini
+DynamicUser=yes
+# dialout: access to the phone's USB serial port
+SupplementaryGroups=dialout
+StateDirectory=nokia-sms
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

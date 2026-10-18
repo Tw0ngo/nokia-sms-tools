@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nokia Logo &amp; Ringtone Tools</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --fg: #1a1a1a;
+            --muted: #666666;
+            --line: #c8c8c8;
+            --panel: #f4f4f4;
+            --accent: #1e4d18;
+            --accent-fg: #ffffff;
+            --lcd: #8BAC0F;
+            --lcd-ink: #1E4D18;
+            --warn: #b00020;
+            color-scheme: light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #161616;
+                --fg: #e8e8e8;
+                --muted: #a0a0a0;
+                --line: #444444;
+                --panel: #222222;
+                --accent: #8BAC0F;
+                --accent-fg: #111111;
+                --warn: #ff6b81;
+                color-scheme: dark;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font: 15px/1.45 system-ui, sans-serif;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0 0 12px;
+        }
+
+        h2 {
+            font-size: 17px;
+            margin: 24px 0 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 16px;
+        }
+
+        .tabs button {
+            font: inherit;
+            background: none;
+            color: var(--muted);
+            border: 1px solid transparent;
+            border-bottom: 0;
+            padding: 8px 14px;
+            cursor: pointer;
+        }
+
+        .tabs button[aria-selected="true"] {
+            color: var(--fg);
+            border-color: var(--line);
+            background: var(--panel);
+            font-weight: 600;
+        }
+
+        .box {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            padding: 12px;
+        }
+
+        figure {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        figcaption, .count, label, .hint, .label {
+            font-size: 13px;
+        }
+
+        .hint {
+            margin: 0 0 10px;
+            color: var(--muted);
+        }
+
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tools.gap {
+            margin-top: 8px;
+        }
+
+        .btn {
+            font: inherit;
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            border-color: var(--fg);
+        }
+
+        .btn[aria-pressed="true"], .btn.main {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--accent-fg);
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            font-family: ui-monospace, monospace;
+            font-size: 13px;
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            padding: 5px 8px;
+            max-width: 100%;
+        }
+
+        input[type="text"] {
+            width: 14ch;
+        }
+
+        input[type="number"] {
+            width: 9ch;
+        }
+
+        kbd, code {
+            font-family: ui-monospace, monospace;
+        }
+
+        /* ---------- logo ---------- */
+
+        .classics {
+            margin-top: 20px;
+        }
+
+        .classics summary {
+            cursor: pointer;
+            font-weight: 600;
+            padding: 6px 0;
+        }
+
+        .classic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 8px;
+        }
+
+        .classic {
+            font: inherit;
+            font-size: 12px;
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            padding: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .classic:hover {
+            border-color: var(--fg);
+        }
+
+        .classic canvas {
+            display: block;
+            width: 144px;
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+
+        .phone {
+            background: #222;
+            padding: 10px;
+            border-radius: 14px 14px 22px 22px;
+        }
+
+        canvas.lcd {
+            display: block;
+            width: 192px;
+            height: 130px;
+            image-rendering: pixelated;
+        }
+
+        #paint {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 721 / 141;
+            border: 1px solid var(--line);
+            cursor: crosshair;
+            touch-action: none;
+            image-rendering: pixelated;
+        }
+
+        .under {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .side {
+            flex: 1 1 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        /* ---------- ringtone ---------- */
+
+        .opts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            align-items: flex-end;
+            margin-top: 12px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .field.wide select {
+            width: 330px;
+        }
+
+        .info {
+            font-weight: 600;
+            font-size: 13px;
+            margin: 10px 0 0;
+        }
+
+        .info:empty {
+            display: none;
+        }
+
+        .label {
+            min-width: 80px;
+        }
+
+        .roll {
+            display: flex;
+            margin-top: 12px;
+            border: 1px solid var(--line);
+            background: var(--lcd);
+        }
+
+        #rollkeys {
+            display: block;
+            flex: none;
+            border-right: 2px solid var(--lcd-ink);
+        }
+
+        .rollscroll {
+            flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #roll {
+            display: block;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        #notecount {
+            margin: 6px 0 0;
+        }
+
+        .piano {
+            position: relative;
+            height: 130px;
+            margin-top: 8px;
+            border: 1px solid var(--line);
+            background: #333;
+        }
+
+        .key {
+            position: absolute;
+            top: 0;
+            padding: 0 0 4px;
+            border: 1px solid #333;
+            cursor: pointer;
+            font-family: ui-monospace, monospace;
+            font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .key.white {
+            width: calc(100% / 28);
+            height: 100%;
+            background: #fafafa;
+            color: #333;
+        }
+
+        .key.black {
+            width: 2.2%;
+            height: 62%;
+            background: #111;
+            color: #ddd;
+            z-index: 1;
+        }
+
+        .key.down, .key:active {
+            background: var(--lcd);
+        }
+
+        .key .nm {
+            font-weight: bold;
+        }
+
+        textarea {
+            display: block;
+            width: 100%;
+            resize: vertical;
+            word-break: break-all;
+        }
+
+        .meter {
+            height: 10px;
+            margin-top: 10px;
+            background: var(--bg);
+            border: 1px solid var(--line);
+        }
+
+        #meterbar {
+            height: 100%;
+            background: var(--accent);
+        }
+
+        #meterbar.over {
+            background: var(--warn);
+        }
+
+        #sizeinfo {
+            margin: 6px 0 10px;
+        }
+
+        /* ---------- send ---------- */
+
+        .sendform {
+            align-items: flex-end;
+            gap: 10px 14px;
+        }
+
+        .sendform input[type="tel"], .sendform input[type="password"] {
+            font: inherit;
+            width: 18ch;
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            padding: 5px 8px;
+        }
+
+        .hp {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Nokia operator logo &amp; ringtone tools</h1>
+        <div class="tabs" role="tablist">
+            <button role="tab" id="tab-logo" aria-controls="logo" aria-selected="true">Operator logo</button>
+            <button role="tab" id="tab-ringtone" aria-controls="ringtone" aria-selected="false">Ringtone</button>
+        </div>
+
+        <section id="logo" role="tabpanel" aria-labelledby="tab-logo">
+            <p class="hint">The little 72&times;14 picture that replaces the network name on the phone's standby screen.
+                Paint your own or start from a classic, then download it or send it to a phone.</p>
+            <div class="box">
+                <p class="hint">Click or drag to paint. Starting on a black pixel erases instead, right click always erases.</p>
+                <canvas id="paint" width="721" height="141"></canvas>
+                <div class="under">
+                    <figure>
+                        <div class="phone"><canvas class="lcd" id="lcd-build" width="96" height="65"></canvas></div>
+                        <figcaption>on the phone</figcaption>
+                    </figure>
+                    <div class="side">
+                        <div class="tools" role="group" aria-label="Tools">
+                            <button class="btn" id="l-t-undo">Undo</button>
+                            <button class="btn" id="l-t-clear">Clear</button>
+                            <button class="btn" id="l-t-invert">Invert</button>
+                            <button class="btn" id="l-t-mirror">Mirror</button>
+                            <button class="btn" id="l-t-sym" aria-pressed="false">Symmetry</button>
+                        </div>
+                        <div class="tools" role="group" aria-label="Move">
+                            <button class="btn" id="l-t-left" aria-label="Move left">&larr;</button>
+                            <button class="btn" id="l-t-right" aria-label="Move right">&rarr;</button>
+                            <button class="btn" id="l-t-up" aria-label="Move up">&uarr;</button>
+                            <button class="btn" id="l-t-down" aria-label="Move down">&darr;</button>
+                            <span class="count" id="pxcount"></span>
+                        </div>
+                        <div class="tools">
+                            <label for="l-fname">File name</label>
+                            <input type="text" id="l-fname" value="my-logo" spellcheck="false">
+                        </div>
+                        <div class="tools">
+                            <button class="btn main" id="l-dl-bmp">Download .bmp</button>
+                            <button class="btn" id="l-dl-art">Download .art</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <details class="classics">
+                <summary>Templates: 47 classic operator logos</summary>
+                <p class="hint">Click one to open it in the editor.</p>
+                <div class="classic-grid" id="classic-grid"></div>
+            </details>
+
+            <div class="send" data-kind="logo" hidden>
+                <h2>Send it to a phone</h2>
+                <div class="box">
+                    <p class="hint">The logo only shows up if it is for the network of the SIM card in the phone. Not sure which one? The phone shows it in its network selection menu.</p>
+                    <form class="tools sendform" novalidate>
+                        <label class="field">Phone number
+                            <input type="tel" name="number" autocomplete="off" inputmode="tel"></label>
+                        <label class="field">Network of the SIM in that phone
+                            <select name="network"></select></label>
+                        <label class="field netother" hidden>Network code (country + network)
+                            <input type="text" name="netcode" placeholder="262 01" spellcheck="false"></label>
+                        <label class="field pwfield" hidden>Password
+                            <input type="password" name="password" autocomplete="current-password"></label>
+                        <!-- honeypot: humans never see or fill this -->
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+                        <button class="btn main" type="submit">Send logo</button>
+                    </form>
+                    <p class="info sendinfo" aria-live="polite"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ringtone" role="tabpanel" aria-labelledby="tab-ringtone" hidden>
+            <p class="hint">One voice, four octaves, about 60 notes fit in one SMS. Start from a MIDI file or play it in yourself.
+                Everything happens in your browser, your files aren't uploaded anywhere.</p>
+            <h2>1. Convert a MIDI</h2>
+            <div class="box">
+                <p class="hint">Ringtones are monophonic: one track is picked as the melody and where notes overlap the highest one wins.
+                    Converting replaces the tune in the editor (Undo brings it back).</p>
+                <div class="tools">
+                    <label class="btn main" for="midifile">Choose .mid file</label>
+                    <input type="file" id="midifile" accept=".mid,.midi,audio/midi" hidden>
+                    <span class="count" id="midiname">no file yet</span>
+                </div>
+                <div class="opts" id="opts" hidden>
+                    <div class="field wide">
+                        <label for="o-voice">Melody</label>
+                        <select id="o-voice"></select>
+                    </div>
+                    <div class="field">
+                        <label for="o-start">Skip seconds</label>
+                        <input type="number" id="o-start" value="0" min="0" step="0.5">
+                    </div>
+                    <div class="field">
+                        <label for="o-max">Max notes</label>
+                        <input type="number" id="o-max" value="60" min="1" max="300">
+                    </div>
+                    <div class="field">
+                        <label for="o-tr">Transpose</label>
+                        <input type="number" id="o-tr" value="0" min="-24" max="24">
+                    </div>
+                    <div class="field">
+                        <label for="o-bpm">BPM</label>
+                        <input type="number" id="o-bpm" placeholder="file" min="25" max="900">
+                    </div>
+                    <div class="field">
+                        <button class="btn main" id="convert">Convert</button>
+                    </div>
+                </div>
+                <p class="info" id="convinfo" aria-live="polite"></p>
+            </div>
+
+            <h2>2. Listen and change it</h2>
+            <div class="box">
+                <p class="hint">Click a key to add a note after the selected one. Click a note in the roll to select it, drag it up or down to change the pitch.
+                    Your computer keyboard plays too (the keys are labelled on the piano), <kbd>P</kbd> is a rest,
+                    <kbd>.</kbd> dots, <kbd>&larr;</kbd> <kbd>&rarr;</kbd> move, <kbd>Backspace</kbd> deletes, <kbd>Space</kbd> plays.</p>
+                <div class="tools" role="group" aria-label="Player">
+                    <button class="btn main" id="t-play">Play</button>
+                    <button class="btn" id="t-undo">Undo</button>
+                    <button class="btn" id="t-clear">Clear</button>
+                    <button class="btn" id="t-down" aria-label="Transpose down">&minus; semitone</button>
+                    <button class="btn" id="t-up" aria-label="Transpose up">+ semitone</button>
+                    <label for="tname">Name</label>
+                    <input type="text" id="tname" value="my-tone" maxlength="15" spellcheck="false">
+                    <label for="tbpm">BPM</label>
+                    <input type="number" id="tbpm" value="120" min="25" max="900">
+                    <span class="count" id="bpmhint"></span>
+                </div>
+                <div class="tools gap" role="group" aria-label="Length of new notes">
+                    <span class="label">New notes</span>
+                    <button class="btn len" data-len="1">1</button>
+                    <button class="btn len" data-len="2">1/2</button>
+                    <button class="btn len" data-len="4">1/4</button>
+                    <button class="btn len" data-len="8">1/8</button>
+                    <button class="btn len" data-len="16">1/16</button>
+                    <button class="btn len" data-len="32">1/32</button>
+                    <button class="btn" id="t-rest">Rest</button>
+                </div>
+                <div class="tools gap" role="group" aria-label="Selected note">
+                    <span class="label">Selected</span>
+                    <button class="btn" id="s-short">Shorter</button>
+                    <button class="btn" id="s-long">Longer</button>
+                    <button class="btn" id="s-dot">Dot</button>
+                    <button class="btn" id="s-odown">Oct &minus;</button>
+                    <button class="btn" id="s-oup">Oct +</button>
+                    <button class="btn" id="s-del">Delete</button>
+                    <span class="count" id="selinfo"></span>
+                </div>
+
+                <!-- piano roll: time left to right, C4 at the bottom, B7 at the top -->
+                <div class="roll">
+                    <canvas id="rollkeys" width="30" height="288"></canvas>
+                    <div class="rollscroll" id="rollscroll"><canvas id="roll" width="800" height="288"></canvas></div>
+                </div>
+                <p class="count" id="notecount"></p>
+                <div class="piano" id="piano"></div>
+            </div>
+
+            <h2>3. Get it out</h2>
+            <div class="box">
+                <p class="hint">RTTTL text, as used by <code>cli/send-ringtone.sh</code> and gammu. You can edit it here too.</p>
+                <textarea id="rtttl" rows="4" spellcheck="false" placeholder="Empty. Play some notes on the keyboard, convert a MIDI or paste RTTTL here (Name:d=4,o=5,b=120:c,e,g)"></textarea>
+                <p class="info" id="rtttlerr" aria-live="polite"></p>
+                <div class="meter"><div id="meterbar"></div></div>
+                <p class="count" id="sizeinfo"></p>
+                <div class="tools">
+                    <label for="fname">File name</label>
+                    <input type="text" id="fname" value="my-tone" spellcheck="false">
+                    <button class="btn main" id="dl-txt">Download .txt</button>
+                    <button class="btn" id="dl-wav">Download .wav</button>
+                    <button class="btn" id="copy">Copy text</button>
+                </div>
+            </div>
+
+            <div class="send" data-kind="ringtone" hidden>
+                <h2>Send it to a phone</h2>
+                <div class="box">
+                    <p class="hint">Any network works. It has to fit in one SMS, check the bar above. The phone asks if you want to keep it.</p>
+                    <form class="tools sendform" novalidate>
+                        <label class="field">Phone number
+                            <input type="tel" name="number" autocomplete="off" inputmode="tel"></label>
+                        <label class="field pwfield" hidden>Password
+                            <input type="password" name="password" autocomplete="current-password"></label>
+                        <!-- honeypot: humans never see or fill this -->
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+                        <button class="btn main" type="submit">Send ringtone</button>
+                    </form>
+                    <p class="info sendinfo" aria-live="polite"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // tabs; the open tab is kept in the URL hash
+        const TABS = ["logo", "ringtone"];
+        function showTab(name) {
+            if (!TABS.includes(name)) name = "logo";
+            TABS.forEach(t => {
+                document.getElementById(t).hidden = t !== name;
+                document.getElementById("tab-" + t).setAttribute("aria-selected", String(t === name));
+            });
+            document.dispatchEvent(new CustomEvent("toolshown", { detail: name }));
+        }
+        TABS.forEach(t => document.getElementById("tab-" + t).onclick = () => { history.replaceState(null, "", "#" + t); showTab(t); });
+        window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+    </script>
+
+    <script>
+        // ================================================================ operator logo
+        (() => {
+
+            // ---------------------------------------------------------------- examples
+            const EXAMPLES = {
+            };
+
+            // ---------------------------------------------------------------- fake 7110 display
+            const LCD_BG = "#8BAC0F", LCD_PX = "#1E4D18";
+            const DIG = { "0": "111101101101111", "1": "010110010010111", "2": "111001111100111", "3": "111001111001111", "4": "101101111001001",
+                "5": "111100111001111", "6": "111100111101111", "7": "111001001001001", "8": "111101111101111", "9": "111101111001111", ":": "000010000010000" };
+            const LET = { M: "101111111101101", e: "000111111100111", n: "000110101101101", u: "000101101101111" };
+
+            function drawLcd(canvas, art) {
+                const c = canvas.getContext("2d");
+                c.fillStyle = LCD_BG; c.fillRect(0, 0, 96, 65);
+                c.fillStyle = LCD_PX;
+                for (let i = 0; i < 4; i++) c.fillRect(1, 2 + i * 4, 2 + i, 2);      // signal
+                c.fillRect(1, 18, 1, 16);
+                for (let i = 0; i < 4; i++) c.fillRect(92 - i, 2 + i * 4, 3 + i, 2); // battery
+                c.fillRect(94, 18, 1, 16);
+                art.split("\n").forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "#") c.fillRect(12 + x, 6 + y, 1, 1); }));
+                const t = new Date(), s = String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
+                const glyph = (g, x0, y0, sc) => [...g].forEach((b, i) => { if (b === "1") c.fillRect(x0 + (i % 3) * sc, y0 + Math.floor(i / 3) * sc, sc, sc); });
+                let x = 48 - (s.length * 8 - 2) / 2;
+                for (const ch of s) { glyph(DIG[ch], x, 28, 2); x += 8; }
+                x = 40;
+                for (const ch of "Menu") { glyph(LET[ch], x, 55, 1); x += 4; }
+            }
+
+            // classic operator logos, redrawn from an old 48-logo collection; 14 rows x 18 hex digits each
+            const CLASSICS = [
+                ["globe", "000001e600c0000000000007e600c00000000000070600c000000000000e0600c00000000000180678f8780000000018e6ecfcfc0000000019ecc5cd8c00000000186ced8df8000000001c6cfd9d80000000000fecfdf9f80000000007ec79f0f0000000000000000000000000000000700000000000000000f800000000"],
+                ["smart", "0000002aa000000000000000554000000000000000aa8000000000000001d50000000000000002aa0000000000000007fc0000000000000ffaab0c1fffe000000ffdf71e1fffe000000f06af3f1ce78000000ff75f7f9fe780000007ffbfe3dfe7800000007ff7dffde78000001ffee78ffcf78000001ff64700fc7f8000"],
+                ["smart-gold", "00002a8000000000000000550000000000000000aa0000000000000001540000000000000002a80000000000000005500000f879e3f0000ee80001fcfcc1f8001540000385bec18c003f800003017ec18c0fd5447ff31f7ec18c1c2fee46c30dfec18c0fb5d35cc38dfec58c01eae7ccc1fcfcfdfc1fa4c0c6c0f479fff0"],
+                ["car", "000000ffffc00d8800000003fffff80ae800000007abff540d900000000a81200a0a80000000141a97150d800000001a1807ab0a80000000146b29950d800000001a80002b0a80000001f57fffd48d000000016a8000aa6b0000000155555555ad000000015faaaabfaf0000000142ffffe2ac0000000142042082ac0000"],
+                ["swoosh", "001c0000060442c000000e000002044580000006000002044c800000070000020c4d000000038000031c2480000003c000019c1c40000001c000019c0c60000000e00000cc1c700000007000006c3c300000003c00007f62180000001e00000142080000000f0000009c1800000003800000641000000001e00000c81000"],
+                ["alien", "2534b000000000003c3f6ef848a1000000743feffc6aa1800020f40fdff93ea18e00007c1e1eff3da18c3e8c3c1c7f7f7940c076df3c1e73325850c66677180fe17e1cbcc67c631807c6db1c3ec278670033c7719e6ecb63260419e5813c6f5b3e361e2dc4fdf87b731e321e34e7a5f0716002000c18e6dbe04000000004"],
+                ["taz", "01fc00fb00000000000037839800ffc1c1ff0067021c00ccc3e1861e618706e0cc42210e3bc00803f00c02200c21c02c03100c0220182000ec03100c06301833c0ca14700c07f0303e386459c00c07f070088e82e6200c04106011c68387200c0418c10399570ba00c0c18c30739b319c03f1c1dff01285c218000000000"],
+                ["nokia", "0000000000000000000000000000000000001541455514155015000aa0aaaa8a2a282a801551455554545055400aa8aa028aa8282a801455450155505051400a2aaa028aa028a0a01415450154505155500a0aaaaa8a2828aaa01405455554145140500a02a2aa8a0a2a8028000000004000000000000000000000000000"],
+                ["batman", "000003f00007e0000000001fe02203fc000000003fc03e01fe000000007f803e01ff00000000ff807f00ff80000001ffe3ffe3ff80000001ffffffffffc0000001ffffffffffc0000001ffffffffffc0000001fcffffff9fc0000001fc3ffffe1f800000007e0c3f187f000000001f001e007c0000000003000c00600000"],
+                ["pandas", "005405001400701500295408a03e02f81f4a7d020a081c08383fdf381a0002c9c00427ce1110200123c0c22784000a0000a301e23780000041804119b13f8000810180003cf17f803601400c4134317f367f40c1cc003803ff7f7f0021e00019c3ff7f3e2004e0c08397fe3e1c00138041c0eefc1c081009d11fe5defc08"],
+                ["teddy-hearts", "00000000501500000050000002881f40000af80000082830c0001f703601800428c3000e207f02400228870004007f0280023087c0e0003e0100c12087c1f0001c0000c1408781f0060801180141000ff00f080019c381001ff03f000003c201001ff07f0001839402001ff07f000100e804000ff03f000445d004000000"],
+                ["sleepy-dog", "00007fe0000fe00000000087fc003010000000007f07004008000000000401808008000000000c01c1800700000000f001c22021c00000012000e290402000000220047ae80010000002401b0fe80018000004402683e8000e00000c002902e8000a00000800a2ef68005e000008c0500690002c000007a7cffa77ffc000"],
+                ["007", "00000000000000078000780783ffdffffff000fc0fc3ffdffffff001fe1fe787dffffff003ce3ce707bfff0000038e38e70f80000000070e70e01f3ffc0000071c71c03e7ff800000e1ce1c07cf8c000000e38e380f8ddc000000e78e781f1ff007d100ff0ff03e1fe0011b007e07e03e00000115007e03c03e000001130"],
+                ["boyzone", "001f800000000000000023c00000000000000045e00000000000000085f1800000000000010df98000000000000116f980000000000001a779f1edbe72c7000116f9fbed848b2a800105f99b6708aa2f80010af9fbe3108a2800019371f3c33e7227000043e00006000000000023c0000600000000001f80000000000000"],
+                ["mtv", "0ff47f0000000000000ffafe8000000000000ffdfeb2a9b98000000fffe6dbaa120000000fff9f23ab9a0000000fff3e42a8920000000ffeae82bb398000000ff9ac8000000000000fffa18000000000000fffb283ba3ab9b9280fefb28122229212b80feab28132329392a80fe8be8122229092a80fe8fe813bb93b3928"],
+                ["quake", "002010000000000000004009e7843c5dcea000c00cc304188c44e000c00cc30e198c04a000c00cc30a1b0c000000c78cc3131b8e000000e31cc31718cc0000007338c321984c0000003ff06221984c4000001fe03473c806c00000078000000000000000030000000000000000032577ffffffa000000200000000000000"],
+                ["quake-2", "0080800000000000000300479e10f1771ee00300630c10623104400300630c3866300cc00300630c286c300cc0033e630c4c6e380cc00396e30c5c63300cc001d5c30c8661300cc000ff81888661390cc0007f00d1cf201b0cc0001c00000000000cc0001400000000001fe0001495dffffffe8000001400000000000000"],
+                ["quake-3", "04010000000000000008008f3c21e2ee3fdc1802c61820c46208881800c61870cc6019981800c61850d870199819fcc61898dc70199818a9c618b8c66019980eab86190cc260199807ff03110cc262199807fe01a39e4036199800f80000000000199800a800000000003ffc00a92bbffffffd000000a800000000000000"],
+                ["stars-stripes", "ffffffffffffffffff999ffffffff801ffff999800000060004000fff800000193c010006667fffffe11f80ffc6667fffff092ce07fcfff8000040cac82600999800004019204600999fffff800800abf0ffffffff80140055e0000000009fa800aa0000000000b804011600ffffffffff08022bc0fffffffffff4045580"],
+                ["cartoon-pals", "0a404d800efffc00000560b66011837800000f0002001d01100000020002000800780000060002000800f8000001004a000c9088000000c04a000c9008000003005a0008007800000400050009f86e0000040e05002b0cfc0000078a39005bfc1f0000004a010021f807000000260a00f8001c00000013f4003c707c0000"],
+                ["dragon", "000c0fc18b08070c00001818060c04038c000018e00c040200c60000108008000600e20000230ff81207806200002208081b0c70260000640806001818b400004c080204c00c340000580801ff8004140000500800607804180000700c1cce8c08180000200433d846081000000007c08021380000000000010e21200000"],
+                ["polo-sport", "000000000000000000fc7cc1f01f3f1f3f3fc6c6c3b819b1bfb18cc2c6c3181c31b1b18cfcc6c3180f3fb1bf0cc0c6c31803b031b30cc0c6c3b821b03bb10cc07cf9f01f301f318c0000000000000000003cf10792043c93cf64249104920424924e343cf1079e043c93882c2491c4120724f24f24000000000000000000"],
+                ["ralph-lauren", "000003ffc0000000000000023bffffc00000000002dbc000000000000002dbffffc000000000021bc000000000000002bbffffc00000000002d84000000000000003ffffffc00000000000000000000000000003ffffffc00000000000000000000000000003ffffffc00000000000000000000000000003ffffffc00000"],
+                ["star-trek-tng", "001f7ee1e1fbc7db80003f7ef1f1fbe7df80003800303000600000003e31b3f0c7ef3800001f33b3e0c7cf3c000007733661ccd86e0000ff67f6618cdf670000fe67f6618cdf63800000000000000000003ab99d5cf76773baec12a1514884545092aa13b95c88b7577292aa2542a15128b894a5542572ba51eeae97a5d4"],
+                ["star-wars-ep1", "0001ece11338c000000002529154a500000000015ee157b8400000000e5298a4a79ff800000000000008000000000fde730c7cfc700000044924922244200000040924212240200000070a23212270200000040820a122402000000448249222442000000fdc730c7cfc7000000000000000000000001ffffffffffff800"],
+                ["star-wars-ep1-b", "000000000000000000000000000000000000007e63c0000000000000fef360ffffffffc000cddb4000000000000fedfbf8764ce738800fcd9b78455114a08000000000455914a08004931e38764d14b88006b79b78444514a08007f6da607458e73880036fdff01000000000036cdbe0ffffffffc0000000000000000000"],
+                ["star-wars", "ffc7ff7fffff7efdeffe11fffffffffffbfffdfcf7f03387f7e7fdf9e07fe02193ffe63ffbcf7fe64497ffd99fdbc27e024080f7bbdff7c236064c90fffbddf7c23ffffffffff99bf7d77d7d9c38fff467f7dfbf290c90ffefe7efb87f0124b3dfbfdfcf753f920401feffbfdf653b926483fbfffdde6dbffffffffffffd"],
+                ["cartoon-dino", "0000000079f600000000000018e67d0000000000001dc0380000000000007fd238000000000001e2523f800000000003c0d217e00000000007a00044b8000000000e4300241c000000001d8000040e000000001906004c0f000000000fc581c80f000000000178fb900f0000000000282ba00f0000000000383840060000"],
+                ["pizza-hut", "00000007ffe00000000000000ffff00000000000001ffff8000000000000ffffff20000000000ffffffff000000000ffffffffff000007e60000001ef0000003700000000c6003000336fdf9e00c60030003761832304de7778003e63061f03f633300030660c3300c6333000306f9f3300c63f38007001c39f81ff1b980"],
+                ["lizard", "00000000000007000000000000000008f000000000000000100c0030000000f80020d200300000038e004127002f00000f0f8082770010c0003107e7827200087000c0c71f012cf0063c01c33a0308c70801a3ffcc06010800040060e03001810400040018c0c000600200080007ff0000183f0ff0000000000007c0f000"],
+                ["goggles", "003e007c007c00f0007ff1ff87ffc3ff1ffe7fee00787c3e01effe7fd03a0783e1a03ffe7fd25a007c03a017fe7fd03a007c05a017fe7fd05a004403a017fe7fe83a01bb05a02ffe7fe85a027c83a02ffe7ff63a15ff45a0dffe7ff91a1bffb0a13ffe7ffec1e7ffcf06fffe7fff3e1ffff0f9fffe0001c1f0001f070000"],
+                ["wo-ai-ni", "0001900001c0220000000e12007e00440000000111011080c7f800000110008901401000361fff87ffe040406c7f01080400204040fe7f01088020004250fe3e014503ffc042487c1c0186005f8044483808070600490048401000190a00860040400000011181060040400000012182198040400000070004e06041c000"],
+                ["i-love-you", "0008000009000002300c08000009000006201c18000019010004203c100000730f240c400c100000133f6408c00833993817d36408800822fbf19f11c5088008276a6103194d08b70865ea42050b5d112d1845ccc40d0e76002110464c480a00003192104788701a0000318c304800001207ff0000e03000001c7c000000"],
+                ["playstation", "01f80000000000000001fc0020000000000001de1f2000e000000001de19a0018402400001de19a0018402000001dc19a7a586734e7807cfd9a0a4e40a514409d05b26a4346a514413e65828a4348a514427cc9828a4348a51444dd9182f9de77bce4499f20000040000000081e400003c000008007ff800000000000000"],
+                ["sonic", "0003fc000000000000030fff800000000000039fdfc0000000000003ff9e003e1e31b1e003ffdc007f3f39b3f001fffe007273bdb73001fc7f803ce1bfb60001793fc01e61bfb60001733fc02773bfb73000323fe07f3f33b3f0034b3c603e1e33b1e003c3780000000000000130fc000000000000018ffe000000000000"],
+                ["bunny", "00000003808000000000000003c18000000000000000e180000000000000006380000000000000003700000000000000003600000000000000003e00000000000000003f00000000000000007f0000000000000000ff8000000000000000ff8000000000000000ff80000000000000007f00000000000000003e00000000"],
+                ["dexter", "0803e00040000000001801f803a0f3d17dee08003807a08a0a1109fffffffffc8bc411ee9ffffffffc8a0a11099fffe3ff98f3d111e980f3c3ff38000000008c7907ee7008208020787c0f1ff01860e0601c3ffe1fe03a64d1a20c1ffc11c0eddf8f3f0c07f1f8400c44c0300e0003384008008020078000184000000000"],
+                ["air-23", "000000001f00000000000000002980c5e18c000000003d012512520000000039021510463c0000003703f5f0827e0000001e02152112ff000000ff821513ccffc00003fff0000000fffffe0fffdff7ffdffffffffffe9fffffffff81fffffe5ff8c00eff803f9ffc3f000000ff000007f8d0000000fc000007fd90000000"],
+                ["powered-by-linux", "fe110848ee43087fc087f7ffffabff9bc078b4559aceaadb961f8ca55d69b5295b3c2046bd633b9dab5b382143a46b9ac628e270e041e7fefeffeffad1f871012094dcca4e508009012094ccca58767031012094e4ca533bffc3012794b0ca733dfe62012d9498ce67967f8603399ccce4e79bc03c0201084871c3087fe0"],
+                ["top-gun", "ffffcf9f87ceeeffff60005050486aaa80063ffdd7574beaa9bffc000515554a0aa8a0003ff515574aeaa82ffc000515504aaaaa20001ff517578babab2ff80005105408282aa0000ff70f9c4fefeeeff000000000a00000000007fffffbbbffffffe002000012090000004001fffff953ffffff8000000001b000000000"],
+                ["faces", "00000ba00003f8000000003ff8001e6380000000400c00703800000000bffa00c00406000000c006008c621c000001bffa0132910800000177dd01129100000001e7cd0116b100000000e38e0116b12000000075580316b1600000003d70008ce200000007ffffc0e10e0380003c9fe03c238801c000404eb80720080080"],
+                ["face", "00000000540000000000000001ff8000000000000002008000000000000007ffc00000000000000e00e00000000000000c006000000000000008fc200000000000000a92a000000000000005bac000000000000005bbc00000000000000993a00000000000000bffa000000000000027ffc0000000000000007840000000"],
+                ["mib", "0000bc1f8f8ffd000000015c1f8f8ffa800000003c1f8f8ffc000000e15e3f8f8f8a830000c0be3f8f8f8d036002e15e3f8f8ffa07c003603f7f8f8ffc068001a157778f8ffa05800080b7778f8f8d020000e157f78f8f8a830000a033f78f8ffc05000091d3e78f8ffa84800090b3e78f8ffd0480000000000000000000"],
+                ["eyes", "ffffff3f7fffbfffffffffefdfbf01f1fffffff1f7ffbc00e3fffffff8ffe1f8007fffffffffff0070007f9ffffffffe0033c07ffffffffcfe03b7e07ffffffffffc07ffe07ffffffffffc07ffe0fc7ffffff0fe07fbc1fe1fffffe3fe03fc07fffffffffffe007fffcfffffffff3f81ffffe7fffffffe7fffffffffffff"],
+                ["kitty", "0c0d870e73fe7fce0e121e88918c0180311111fe88a18c018030a1103988c28c018030412019c8848b8e71c8022007c80888881104042007481088881102082000481088881101107600480888881101100606e8848888110110706608c288881101101000c8a188881101102c010891888811011003fe870e70700e00e0"],
+                ["bears", "007cff9f00f9ff3e0000830060810600c100013e003e427c007c800138000e4270001c800138140e4270281c800090140c813028098000f0000700e0000e0000103e0400207c08000010c184002183080000111c44002238880000113e4400227c880000091c440012389000000cc188001183b00000043e1000187c2000"],
+                ["wave", "ffffff01e1aaaaaaaaffffff00e155555555ffffff0071aaaaaaaaffffff00f8d5555555ffffff80f8eaaaaaaaffffff80fc75555555ffffff803f3aaaaaaafffffe00001d555555fffffc00000eaaaaaafffff8000005555555fffff8000006aaaaaafffffc000003555555fffffc000006aaaaaaffffff00007d555555"],
+            ];
+            const classicGrid = document.getElementById("classic-grid");
+            function addTile(key, name) {
+                const num = classicGrid.children.length + 1;
+                const art = EXAMPLES[key];
+                const btn = document.createElement("button");
+                btn.className = "classic";
+                btn.dataset.logo = key;
+                btn.dataset.name = name;
+                btn.title = "Open #" + num + " in the editor";
+                const cv = document.createElement("canvas");
+                cv.width = 72; cv.height = 14;
+                const c = cv.getContext("2d");
+                c.fillStyle = LCD_BG; c.fillRect(0, 0, 72, 14);
+                c.fillStyle = LCD_PX;
+                art.split("\n").forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "#") c.fillRect(x, y, 1, 1); }));
+                const label = document.createElement("span");
+                label.textContent = num;
+                btn.append(cv, label);
+                classicGrid.append(btn);
+            }
+            CLASSICS.forEach(([name, hex]) => {
+                EXAMPLES["classic-" + name] = Array.from({ length: 14 }, (_, y) =>
+                    [...hex.slice(y * 18, y * 18 + 18)].map(d => parseInt(d, 16).toString(2).padStart(4, "0")).join("").replace(/1/g, "#").replace(/0/g, ".")).join("\n");
+                addTile("classic-" + name, name);
+            });
+
+            // ---------------------------------------------------------------- builder
+            const W = 72, H = 14, CELL = 10;
+            const paint = document.getElementById("paint"), pc = paint.getContext("2d");
+            const fname = document.getElementById("l-fname");
+            let grid = Array.from({ length: H }, () => Array(W).fill(0));
+            let undo = [], sym = false;
+            const fromArt = s => s.split("\n").slice(0, H).map(r => [...r.padEnd(W, ".")].slice(0, W).map(c => c === "#" ? 1 : 0));
+            const toArt = g => g.map(r => r.map(b => b ? "#" : ".").join("")).join("\n");
+            const snap = () => { undo.push(toArt(grid)); if (undo.length > 100) undo.shift(); };
+            const safeName = () => fname.value.trim().replace(/[^A-Za-z0-9_-]/g, "-") || "my-logo";
+
+            try { const s = localStorage.getItem("nokia-logo"); if (s) grid = fromArt(s); } catch (_) { }
+            try { const n = localStorage.getItem("nokia-logo-name"); if (n) fname.value = n; } catch (_) { }
+
+            function redraw() {
+                pc.fillStyle = LCD_BG; pc.fillRect(0, 0, paint.width, paint.height);
+                pc.fillStyle = LCD_PX;
+                for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (grid[y][x]) pc.fillRect(x * CELL + 1, y * CELL + 1, CELL - 1, CELL - 1);
+                for (let x = 0; x <= W; x++) { pc.fillStyle = x === 36 ? "rgba(30,77,24,.5)" : x % 8 === 0 ? "rgba(30,77,24,.3)" : "rgba(30,77,24,.12)"; pc.fillRect(x * CELL, 0, 1, paint.height); }
+                for (let y = 0; y <= H; y++) { pc.fillStyle = y === 7 ? "rgba(30,77,24,.35)" : "rgba(30,77,24,.12)"; pc.fillRect(0, y * CELL, paint.width, 1); }
+                const art = toArt(grid);
+                drawLcd(document.getElementById("lcd-build"), art);
+                document.getElementById("pxcount").textContent = grid.flat().filter(Boolean).length + " px black";
+                try { localStorage.setItem("nokia-logo", art); localStorage.setItem("nokia-logo-name", fname.value); } catch (_) { }
+            }
+
+            let drawing = false, value = 1, last = null;
+            function cellAt(e) {
+                const r = paint.getBoundingClientRect();
+                return [Math.floor((e.clientX - r.left) / r.width * W), Math.floor((e.clientY - r.top) / r.height * H)];
+            }
+            function setPx(x, y) {
+                if (x < 0 || x >= W || y < 0 || y >= H) return;
+                grid[y][x] = value;
+                if (sym) grid[y][W - 1 - x] = value;
+            }
+            function line(a, b) { // fill gaps when the pointer moves fast
+                let [x0, y0] = a; const [x1, y1] = b;
+                const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+                let err = dx + dy;
+                for (; ;) { setPx(x0, y0); if (x0 === x1 && y0 === y1) break; const e2 = 2 * err; if (e2 >= dy) { err += dy; x0 += sx; } if (e2 <= dx) { err += dx; y0 += sy; } }
+            }
+            paint.addEventListener("contextmenu", e => e.preventDefault());
+            paint.addEventListener("pointerdown", e => {
+                const [x, y] = cellAt(e);
+                if (x < 0 || x >= W || y < 0 || y >= H) return;
+                snap(); drawing = true; paint.setPointerCapture(e.pointerId);
+                value = e.button === 2 ? 0 : grid[y][x] ? 0 : 1;
+                setPx(x, y); last = [x, y]; redraw();
+            });
+            paint.addEventListener("pointermove", e => {
+                if (!drawing) return;
+                const p = cellAt(e);
+                if (last && p[0] === last[0] && p[1] === last[1]) return;
+                line(last, p); last = p; redraw();
+            });
+            const end = () => { drawing = false; last = null; };
+            paint.addEventListener("pointerup", end); paint.addEventListener("pointercancel", end);
+
+            const act = (id, fn) => document.getElementById(id).onclick = () => { snap(); fn(); redraw(); };
+            act("l-t-clear", () => grid = grid.map(r => r.map(() => 0)));
+            act("l-t-invert", () => grid = grid.map(r => r.map(b => 1 - b)));
+            act("l-t-mirror", () => grid = grid.map(r => r.slice().reverse()));
+            act("l-t-left", () => grid = grid.map(r => [...r.slice(1), 0]));
+            act("l-t-right", () => grid = grid.map(r => [0, ...r.slice(0, -1)]));
+            act("l-t-up", () => grid = [...grid.slice(1), Array(W).fill(0)]);
+            act("l-t-down", () => grid = [Array(W).fill(0), ...grid.slice(0, -1)]);
+            document.getElementById("l-t-undo").onclick = () => { if (undo.length) { grid = fromArt(undo.pop()); redraw(); } };
+            document.getElementById("l-t-sym").onclick = e => { sym = !sym; e.currentTarget.setAttribute("aria-pressed", String(sym)); };
+            document.addEventListener("keydown", e => {
+                const tag = document.activeElement.tagName;
+                if (document.getElementById("logo").hidden) return;
+                if ((e.ctrlKey || e.metaKey) && e.key === "z" && tag !== "TEXTAREA" && tag !== "INPUT") { e.preventDefault(); document.getElementById("l-t-undo").click(); }
+            });
+            document.querySelectorAll("[data-logo]").forEach(b => b.onclick = () => {
+                snap(); grid = fromArt(EXAMPLES[b.dataset.logo]); fname.value = b.dataset.name; redraw();
+                paint.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            fname.addEventListener("input", redraw);
+
+            // 72x14 1-bit BMP, same layout as makelogo.py writes
+            function bmpBytes() {
+                const stride = Math.ceil(W / 32) * 4, pixels = new Uint8Array(stride * H);
+                for (let y = 0; y < H; y++) for (let x = 0; x < W; x++)
+                    if (grid[H - 1 - y][x]) pixels[y * stride + (x >> 3)] |= 0x80 >> (x & 7);
+                const off = 14 + 40 + 8, buf = new ArrayBuffer(off + pixels.length), v = new DataView(buf);
+                v.setUint8(0, 0x42); v.setUint8(1, 0x4D); v.setUint32(2, buf.byteLength, true); v.setUint32(10, off, true);
+                v.setUint32(14, 40, true); v.setInt32(18, W, true); v.setInt32(22, H, true); v.setUint16(26, 1, true); v.setUint16(28, 1, true);
+                v.setUint32(34, pixels.length, true); v.setInt32(38, 2835, true); v.setInt32(42, 2835, true); v.setUint32(46, 2, true); v.setUint32(50, 2, true);
+                [255, 255, 255, 0, 0, 0, 0, 0].forEach((b, i) => v.setUint8(54 + i, b)); // 0 = white, 1 = black
+                new Uint8Array(buf, off).set(pixels);
+                return buf;
+            }
+            function download(data, name, type) {
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([data], { type }));
+                a.download = name; document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+            }
+            document.getElementById("l-dl-bmp").onclick = () => download(bmpBytes(), safeName() + ".bmp", "image/bmp");
+            document.getElementById("l-dl-art").onclick = () => download(toArt(grid) + "\n", safeName() + ".art", "text/plain");
+            redraw();
+            window.getLogoArt = () => toArt(grid);
+        })();
+    </script>
+
+    <script>
+        // ================================================================ ringtone
+        (() => {
+
+            // ---------------------------------------------------------------- music basics (same rules as midi2rtttl.py)
+            const NOTES = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
+            const LENGTHS = [1, 2, 4, 8, 16, 32];          // RTTTL note lengths (whole .. 1/32)
+            const OCT_MIN = 4, OCT_MAX = 7;                 // octaves Nokia ringtones can play
+            const LO = (OCT_MIN + 1) * 12, HI = (OCT_MAX + 2) * 12 - 1; // MIDI pitch range (C4=60)
+            const GM_DRUMS = 9;                             // MIDI channel 10 is percussion
+            // tempos the phone knows; anything else gets rounded up to the next one
+            const PHONE_BPM = [25, 28, 31, 35, 40, 45, 50, 56, 63, 70, 80, 90, 100, 112, 125, 140, 160, 180, 200, 225, 250, 285, 320, 355, 400, 450, 500, 565, 635, 715, 800, 900];
+
+            const units = n => 32 / n.L * (n.dot ? 1.5 : 1);     // length in 1/32 notes
+            const octOf = p => Math.floor(p / 12) - 1;
+            const noteName = p => NOTES[p % 12] + octOf(p);
+            const fold = p => { while (p < LO) p += 12; while (p > HI) p -= 12; return p; };
+
+            // (units, L, dotted), longest first
+            const OPTS = LENGTHS.flatMap(L => { const u = 32 / L; return u >= 2 ? [[u, L, false], [u * 3 / 2, L, true]] : [[u, L, false]]; })
+                .sort((a, b) => b[0] - a[0]);
+            const nearestLength = u => OPTS.reduce((best, o) => {
+                const d = Math.abs(o[0] - u), bd = Math.abs(best[0] - u);
+                return d < bd || (d === bd && o[0] > best[0]) ? o : best;
+            });
+            function splitRest(u) {
+                const out = [];
+                while (u >= 1) { const o = OPTS.find(o => o[0] <= u); out.push(o); u -= o[0]; }
+                return out;
+            }
+
+            // ---------------------------------------------------------------- RTTTL text <-> tune
+            // tune = { name, bpm, notes: [{ p: midi pitch or null for a rest, L: 1..32, dot }] }
+            function toRtttl(t) {
+                const common = (vals, def) => {
+                    const c = {}; let best = def, n = 0;
+                    vals.forEach(v => { c[v] = (c[v] || 0) + 1; if (c[v] > n) { n = c[v]; best = v; } });
+                    return best;
+                };
+                const d = common(t.notes.map(n => n.L), 4);
+                const o = common(t.notes.filter(n => n.p !== null).map(n => octOf(n.p)), 5);
+                const toks = t.notes.map(n => {
+                    let s = (n.L === d ? "" : n.L) + (n.p === null ? "p" : NOTES[n.p % 12]) + (n.dot ? "." : "");
+                    if (n.p !== null && octOf(n.p) !== o) s += octOf(n.p);
+                    return s;
+                });
+                return safeTitle(t.name) + ":d=" + d + ",o=" + o + ",b=" + t.bpm + ":" + toks.join(",");
+            }
+            const emptyTune = (bpm = 120) => ({ name: "my-tone", bpm, notes: [] });
+            const safeTitle = s => s.replace(/[^A-Za-z0-9 _-]/g, "").trim().slice(0, 15).trim() || "Ringtone";
+
+            function parseRtttl(text) {
+                const parts = text.trim().split(":");
+                if (parts.length !== 3) throw "Needs three parts: name:d=4,o=5,b=120:notes";
+                const def = { d: 4, o: 5, b: 63 };
+                parts[1].split(",").forEach(kv => {
+                    const m = kv.trim().match(/^([dob])\s*=\s*(\d+)$/i);
+                    if (m) def[m[1].toLowerCase()] = +m[2]; else if (kv.trim()) throw "Can't read setting \"" + kv.trim() + "\"";
+                });
+                const notes = [];
+                for (const raw of parts[2].split(",")) {
+                    const tok = raw.trim().toLowerCase();
+                    if (!tok) continue;
+                    const m = tok.match(/^(\d+)?([a-gp]#?)(\.)?(\d)?(\.)?$/);
+                    if (!m) throw "Can't read note \"" + raw.trim() + "\"";
+                    const L = m[1] ? +m[1] : def.d;
+                    if (!LENGTHS.includes(L)) throw "\"" + raw.trim() + "\": length must be 1, 2, 4, 8, 16 or 32";
+                    const dot = !!(m[3] || m[5]);
+                    if (m[2] === "p") { notes.push({ p: null, L, dot }); continue; }
+                    const oc = m[4] ? +m[4] : def.o;
+                    notes.push({ p: fold((oc + 1) * 12 + NOTES.indexOf(m[2])), L, dot });
+                }
+                return { name: parts[0].trim() || "Ringtone", bpm: Math.min(900, Math.max(25, def.b)), notes };
+            }
+
+            // exact size of the Nokia Smart Messaging (OTT) ringtone the server sends, same bytes as gammu:
+            // 55 bits of header + the name, style and tempo, 12 bits per note or rest, 5 more whenever the
+            // octave changes, padded to a byte, plus an end byte. Leading rests are dropped.
+            const SMS_MAX = 133;   // 140 bytes of user data minus the 7 byte port header
+            function smsBytes(t) {
+                const first = t.notes.findIndex(n => n.p !== null), notes = first < 0 ? [] : t.notes.slice(first);
+                let bits = 55 + 8 * safeTitle(t.name).length + (notes.length ? 13 : 0), oct = null;
+                for (const n of notes) {
+                    bits += 12;
+                    if (n.p !== null && octOf(n.p) !== oct) { oct = octOf(n.p); bits += 5; }
+                }
+                return Math.ceil(bits / 8) + 1;
+            }
+
+            // ---------------------------------------------------------------- MIDI -> tune (port of midi2rtttl.py)
+            function parseMidi(d) {
+                const str = (i, n) => String.fromCharCode(...d.subarray(i, i + n));
+                const u32 = i => ((d[i] << 24) | (d[i + 1] << 16) | (d[i + 2] << 8) | d[i + 3]) >>> 0;
+                const u16 = i => (d[i] << 8) | d[i + 1];
+                function vlq(i) { let v = 0, b; do { b = d[i++]; v = v * 128 + (b & 0x7F); } while (b & 0x80 && i < d.length); return [v, i]; }
+                if (str(0, 4) !== "MThd") throw "That's not a MIDI file.";
+                const hlen = u32(4), ntrk = u16(10), div = u16(12);
+                if (div & 0x8000) throw "SMPTE-timed MIDI files are not supported.";
+                let pos = 8 + hlen; const tempos = [], notes = [], names = {};
+                for (let t = 0; t < ntrk; t++) {
+                    while (pos + 8 <= d.length && str(pos, 4) !== "MTrk") pos += 8 + u32(pos + 4);   // skip unknown chunks
+                    if (pos + 8 > d.length) break;
+                    const end = Math.min(d.length, pos + 8 + u32(pos + 4));
+                    let i = pos + 8, tick = 0, status = 0; const on = {};
+                    pos = end;
+                    while (i < end) {
+                        let dt; [dt, i] = vlq(i); tick += dt;
+                        if (d[i] & 0x80) status = d[i++];
+                        if (status === 0xFF) {                              // meta event
+                            const typ = d[i]; let ln; [ln, i] = vlq(i + 1);
+                            const data = d.subarray(i, i + ln); i += ln;
+                            if (typ === 0x51 && ln === 3) tempos.push([tick, (data[0] << 16) | (data[1] << 8) | data[2]]);
+                            if (typ === 0x03 && !(t in names)) names[t] = String.fromCharCode(...data).trim();
+                            status = 0;
+                        } else if (status === 0xF0 || status === 0xF7) {    // sysex
+                            let ln; [ln, i] = vlq(i); i += ln; status = 0;
+                        } else if (status >= 0x80) {
+                            const kind = status & 0xF0, ch = status & 0x0F, a = d[i], b = d[i + 1];
+                            i += kind === 0xC0 || kind === 0xD0 ? 1 : 2;
+                            const k = ch + ":" + a;
+                            if (kind === 0x90 && b > 0) (on[k] = on[k] || []).push(tick);
+                            else if (kind === 0x80 || kind === 0x90) {
+                                const s = on[k] && on[k].shift();
+                                if (s !== undefined && tick > s) notes.push({ t, ch, s, e: tick, p: a });
+                            }
+                        } else i++;                                         // garbage, skip a byte
+                    }
+                }
+                tempos.sort((a, b) => a[0] - b[0]);
+                return { tpb: div, tempo: tempos.length ? tempos[0][1] : 500000, notes, names };
+            }
+
+            function voicesOf(notes) {
+                const v = new Map();
+                for (const n of notes) { const k = n.t + ":" + n.ch; if (!v.has(k)) v.set(k, []); v.get(k).push(n); }
+                return v;
+            }
+
+            // most notes wins, but among voices with at least half as many notes as the
+            // busiest one prefer the highest-pitched (melodies usually sit on top)
+            function pickVoice(v) {
+                let cand = [...v.entries()].filter(([k, ns]) => ns[0].ch !== GM_DRUMS);
+                if (!cand.length) cand = [...v.entries()];
+                const most = Math.max(...cand.map(([, ns]) => ns.length));
+                const avg = ns => ns.reduce((s, n) => s + n.p, 0) / ns.length;
+                return cand.filter(([, ns]) => ns.length >= most / 2).reduce((a, b) => avg(b[1]) > avg(a[1]) ? b : a)[0];
+            }
+
+            // one note at a time: highest note at each onset, cut at the next onset
+            function skyline(ns) {
+                const at = new Map();
+                for (const n of ns) if (!at.has(n.s) || n.p > at.get(n.s).p) at.set(n.s, n);
+                const starts = [...at.keys()].sort((a, b) => a - b);
+                return starts.map((s, k) => {
+                    const n = at.get(s);
+                    return { s, e: k + 1 < starts.length ? Math.min(n.e, starts[k + 1]) : n.e, p: n.p };
+                });
+            }
+
+            function convert(midi, o) {
+                const v = voicesOf(midi.notes);
+                const key = o.voice === "auto" ? pickVoice(v) : o.voice;
+                const usPerBeat = midi.tempo;
+                const bpm = o.bpm || Math.round(60000000 / usPerBeat);
+                const startTick = o.start * 1000000 / usPerBeat * midi.tpb;
+                const melody = skyline(v.get(key)).filter(n => n.s >= startTick);
+                if (!melody.length) throw "No notes after the skipped seconds.";
+
+                // quantise to 1/32 notes
+                const unit = midi.tpb / 8, q = t => Math.round(t / unit);
+                let ev = [], cur = q(melody[0].s);
+                for (const n of melody) {
+                    let qs = Math.max(q(n.s), cur), qe = q(n.e);
+                    if (qe <= qs) qe = qs + 1;
+                    splitRest(qs - cur).forEach(r => ev.push({ p: null, L: r[1], dot: r[2] }));
+                    const len = nearestLength(qe - qs);
+                    ev.push({ p: n.p + o.transpose, L: len[1], dot: len[2] });
+                    cur = qs + len[0];
+                }
+
+                // shift the whole tune by octaves into the playable range, then fold outliers
+                const ps = ev.filter(e => e.p !== null).map(e => e.p).sort((a, b) => a - b);
+                const shift = 12 * Math.round(((LO + HI) / 2 - ps[ps.length >> 1]) / 12);
+                let folded = 0;
+                ev.forEach(e => { if (e.p !== null) { const f = fold(e.p + shift); if (f !== e.p + shift) folded++; e.p = f; } });
+
+                // cut after max notes, drop trailing rests
+                const out = []; let count = 0;
+                for (const e of ev) { if (e.p !== null) { if (count === o.max) break; count++; } out.push(e); }
+                while (out.length && out[out.length - 1].p === null) out.pop();
+                return { key, bpm, count, total: melody.length, folded, notes: out };
+            }
+
+            // ---------------------------------------------------------------- piano roll
+            // time runs left to right, one row per semitone, C4 at the bottom and B7 at the top
+            const ROLL_BG = "#8BAC0F", ROLL_NOTE = "#1E4D18", ROLL_SEL = "#a49cba", ROLL_NOW = "#ffffff", ROLL_CUR = "#13092D";
+            const startsOf = notes => { let u = 0; return notes.map(n => { const s = u; u += units(n); return s; }); };
+            const totalUnits = notes => notes.reduce((s, n) => s + units(n), 0);
+
+            // o: px per 1/32 note, row height, sel / now (note index), head (play position in 1/32 notes), cursor, grid
+            function drawRoll(canvas, notes, o) {
+                const c = canvas.getContext("2d"), W = canvas.width, H = canvas.height, st = startsOf(notes);
+                const y = p => (HI - p) * o.row;
+                c.fillStyle = ROLL_BG; c.fillRect(0, 0, W, H);
+                c.fillStyle = "rgba(30,77,24,.13)";
+                for (let p = LO; p <= HI; p++) if (NOTES[p % 12].length > 1) c.fillRect(0, y(p), W, o.row);
+                if (o.grid) {
+                    c.fillStyle = "rgba(30,77,24,.4)";
+                    for (let p = LO; p <= HI; p += 12) c.fillRect(0, y(p) + o.row - 1, W, 1);              // line under every C
+                    for (let u = 0; u * o.px < W; u += 8) {                                                   // quarters, bars
+                        c.fillStyle = u % 32 === 0 ? "rgba(30,77,24,.4)" : "rgba(30,77,24,.15)"; c.fillRect(u * o.px, 0, 1, H);
+                    }
+                }
+                notes.forEach((n, i) => {
+                    const x = st[i] * o.px, w = Math.max(1, units(n) * o.px - 1);
+                    if (n.p === null) {                                                                       // a rest: only shown when selected
+                        if (i === o.sel) { c.fillStyle = "rgba(164,156,186,.45)"; c.fillRect(x, 0, w, H); }
+                        return;
+                    }
+                    c.fillStyle = i === o.now ? ROLL_NOW : i === o.sel ? ROLL_SEL : ROLL_NOTE;
+                    c.fillRect(x + 1, y(n.p), w, o.row);
+                    if (o.grid) { c.fillStyle = ROLL_NOTE; c.fillRect(x + 1, y(n.p), 1, o.row); }               // makes repeated notes readable
+                });
+                if (o.cursor) {                                                                               // new notes go here
+                    const x = o.sel < 0 ? 0 : (st[o.sel] + units(notes[o.sel])) * o.px;
+                    c.fillStyle = ROLL_CUR; c.fillRect(x, 0, 2, H);
+                }
+                if (o.head != null) { c.fillStyle = ROLL_NOW; c.fillRect(o.head * o.px, 0, 2, H); }
+            }
+
+            // little piano down the left side of the roll
+            function drawRollKeys(canvas, row) {
+                const c = canvas.getContext("2d");
+                c.fillStyle = ROLL_BG; c.fillRect(0, 0, canvas.width, canvas.height);
+                c.font = "bold 8px monospace"; c.textBaseline = "bottom";
+                for (let p = LO; p <= HI; p++) {
+                    const y = (HI - p) * row;
+                    if (NOTES[p % 12].length > 1) { c.fillStyle = ROLL_NOTE; c.fillRect(0, y, 18, row); }
+                    if (p % 12 === 0) { c.fillStyle = ROLL_NOTE; c.fillRect(0, y + row - 1, canvas.width, 1); c.fillText("C" + octOf(p), 13, y + row - 1); }
+                }
+            }
+
+            // ---------------------------------------------------------------- sound
+            let actx = null, playing = null;
+            const freq = p => 440 * Math.pow(2, (p - 69) / 12);
+            // phones only allow sound that starts inside a tap, and iOS mutes Web Audio with the
+            // silent switch unless the page asks for "playback"
+            function audio() {
+                if (!actx) {
+                    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (_) { }
+                    actx = new (window.AudioContext || window.webkitAudioContext)();
+                    const b = actx.createBufferSource();                       // older iOS: unlocks on the first sound played
+                    b.buffer = actx.createBuffer(1, 1, 22050); b.connect(actx.destination); b.start(0);
+                }
+                if (actx.state !== "running") actx.resume();
+                return actx;
+            }
+            // on touch screens pointerdown doesn't count as a tap yet, touchend does
+            document.addEventListener("touchend", audio, { passive: true });
+            function beep(p, dur) {
+                audio();
+                const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+                o.type = "square"; o.frequency.value = freq(p);
+                g.gain.setValueAtTime(0.07, t); g.gain.setValueAtTime(0, t + dur);
+                o.connect(g).connect(actx.destination); o.start(t); o.stop(t + dur + 0.02);
+            }
+            // plays notes[from..], calls onNote(index, position in 1/32 notes) as it goes and onEnd() at the end
+            function playTune(t, from, onNote, onEnd) {
+                stopTune();
+                audio();
+                const unitS = 60 / t.bpm / 8, t0 = actx.currentTime + 0.1, times = [];
+                const g = actx.createGain(); g.gain.value = 0.07; g.connect(actx.destination);
+                let at = t0;
+                for (let i = from; i < t.notes.length; i++) {
+                    const n = t.notes[i], len = units(n) * unitS;
+                    times.push([at, i]);
+                    if (n.p !== null) {
+                        const o = actx.createOscillator(); o.type = "square"; o.frequency.value = freq(n.p);
+                        o.connect(g); o.start(at); o.stop(at + Math.max(0.01, len - Math.min(len / 10, 0.01))); // tiny gap so repeated notes are audible
+                    }
+                    at += len;
+                }
+                const me = { g, end: at, raf: 0 }, offset = startsOf(t.notes)[from] || 0;
+                const tick = () => {
+                    if (playing !== me) return;
+                    const now = actx.currentTime;
+                    if (now >= me.end) { stopTune(); onEnd(); return; }
+                    const cur = times.filter(x => x[0] <= now).pop();
+                    if (cur) onNote(cur[1], offset + (now - t0) / unitS);
+                    me.raf = requestAnimationFrame(tick);
+                };
+                playing = me; tick();
+            }
+            function stopTune() {
+                if (!playing) return;
+                playing.g.disconnect(); cancelAnimationFrame(playing.raf); playing = null;
+            }
+
+            // square-wave WAV, same as midi2rtttl.py --wav
+            function wavBytes(t, rate = 22050) {
+                const unitS = 60 / t.bpm / 8, chunks = [];
+                for (const n of t.notes) {
+                    const len = Math.floor(units(n) * unitS * rate), a = new Uint8Array(len).fill(128);
+                    if (n.p !== null) {
+                        const f = freq(n.p), gap = Math.min(Math.floor(len / 10), Math.floor(0.01 * rate));
+                        for (let k = 0; k < len - gap; k++) a[k] = (k * f / rate) % 1 < 0.5 ? 160 : 96;
+                    }
+                    chunks.push(a);
+                }
+                const size = chunks.reduce((s, a) => s + a.length, 0), buf = new ArrayBuffer(44 + size), v = new DataView(buf);
+                const tag = (o, s) => [...s].forEach((ch, i) => v.setUint8(o + i, ch.charCodeAt(0)));
+                tag(0, "RIFF"); v.setUint32(4, 36 + size, true); tag(8, "WAVE"); tag(12, "fmt ");
+                v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true);
+                v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); tag(36, "data"); v.setUint32(40, size, true);
+                let off = 44; chunks.forEach(a => { new Uint8Array(buf, off, a.length).set(a); off += a.length; });
+                return buf;
+            }
+
+            // ---------------------------------------------------------------- editor
+            const $ = id => document.getElementById(id);
+            const fname = $("fname"), tname = $("tname"), tbpm = $("tbpm"), rtttlEl = $("rtttl");
+            const roll = $("roll"), rollScroll = $("rollscroll"), PX = 3, ROW = 6;   // 1/32 note = 3px, semitone = 6px
+            let tune = emptyTune(), sel = -1, newLen = 8;
+            let undo = [], playingAt = -1, playHead = null, typing = false;
+            const snap = () => { undo.push(JSON.stringify([tune, sel])); if (undo.length > 100) undo.shift(); };
+            const safeName = () => fname.value.trim().replace(/[^A-Za-z0-9_-]/g, "-") || "my-tone";
+
+            try { const s = localStorage.getItem("nokia-ringtone"); if (s !== null) { tune = s ? parseRtttl(s) : emptyTune(); sel = tune.notes.length - 1; } } catch (_) { }
+            try { const n = localStorage.getItem("nokia-ringtone-file"); if (n) fname.value = n; } catch (_) { }
+
+            function redraw() {
+                sel = Math.min(sel, tune.notes.length - 1);
+                tname.value !== tune.name && document.activeElement !== tname && (tname.value = tune.name);
+                if (document.activeElement !== tbpm) tbpm.value = tune.bpm;
+
+                // roll: long enough for the tune plus room to keep adding
+                const st = startsOf(tune.notes), total = totalUnits(tune.notes);
+                roll.width = Math.max(rollScroll.clientWidth || 800, (total + 64) * PX);
+                drawRoll(roll, tune.notes, { px: PX, row: ROW, sel, now: playingAt, head: playHead, cursor: playHead === null, grid: true });
+                // keep the play head or the cursor in view, without scrolling the page
+                const fx = (playHead !== null ? playHead : sel < 0 ? 0 : st[sel] + units(tune.notes[sel])) * PX, vw = rollScroll.clientWidth;
+                if (fx < rollScroll.scrollLeft + 20 || fx > rollScroll.scrollLeft + vw - 40) rollScroll.scrollLeft = Math.max(0, fx - vw / 3);
+
+                const sn = tune.notes[sel];
+                $("selinfo").textContent = sn ? "1/" + sn.L + (sn.dot ? " dotted" : "") + " " + (sn.p === null ? "rest" : noteName(sn.p).toUpperCase()) : "";
+                document.querySelectorAll(".len").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.len === newLen)));
+
+                const nn = tune.notes.filter(n => n.p !== null).length;
+                const secs = total * 60 / tune.bpm / 8;
+                $("notecount").textContent = nn + " notes, " + (tune.notes.length - nn) + " rests, " + secs.toFixed(1) + " s";
+                const pb = PHONE_BPM.find(b => b >= tune.bpm) || 900;   // the phone rounds up to the next tempo it knows
+                $("bpmhint").textContent = pb === tune.bpm ? "" : "(the phone plays " + pb + ")";
+
+                const text = tune.notes.length ? toRtttl(tune) : "";   // nothing to show for an empty tune
+                if (!typing) { rtttlEl.value = text; $("rtttlerr").textContent = ""; }
+                const bytes = tune.notes.some(n => n.p !== null) ? smsBytes(tune) : 0;
+                $("meterbar").style.width = Math.min(100, bytes / SMS_MAX * 100) + "%";
+                $("meterbar").className = bytes > SMS_MAX ? "over" : "";
+                $("sizeinfo").textContent = !bytes ? "0 of " + SMS_MAX + " bytes: nothing to send yet" : bytes + " of " + SMS_MAX + " bytes: " + (bytes <= SMS_MAX ? "fits in one SMS" : "too long for one SMS, delete some notes or convert with fewer max notes");
+                try { localStorage.setItem("nokia-ringtone", text); localStorage.setItem("nokia-ringtone-file", fname.value); } catch (_) { }
+            }
+
+            function insert(p) {
+                snap();
+                const n = { p, L: newLen, dot: false };
+                tune.notes.splice(sel + 1, 0, n); sel++;
+                if (p !== null) beep(p, Math.min(0.6, units(n) * 60 / tune.bpm / 8));
+                redraw();
+            }
+            const act = (id, fn) => $(id).onclick = () => { snap(); fn(); redraw(); };
+            const onSel = fn => () => { const n = tune.notes[sel]; if (n) fn(n); };
+            act("t-clear", () => { tune = emptyTune(tune.bpm); sel = -1; fname.value = "my-tone"; });
+            act("t-up", () => tune.notes.forEach(n => { if (n.p !== null) n.p = fold(n.p + 1); }));
+            act("t-down", () => tune.notes.forEach(n => { if (n.p !== null) n.p = fold(n.p - 1); }));
+            act("s-short", onSel(n => { if (n.L < 32) n.L *= 2; if (n.L === 32) n.dot = false; }));
+            act("s-long", onSel(n => { if (n.L > 1) n.L /= 2; }));
+            act("s-dot", onSel(n => { if (n.L < 32) n.dot = !n.dot; }));
+            act("s-oup", onSel(n => { if (n.p !== null && n.p + 12 <= HI) n.p += 12; }));
+            act("s-odown", onSel(n => { if (n.p !== null && n.p - 12 >= LO) n.p -= 12; }));
+            act("s-del", () => { if (sel >= 0) { tune.notes.splice(sel, 1); sel--; } });
+            $("t-rest").onclick = () => insert(null);
+            $("t-undo").onclick = () => { if (undo.length) { [tune, sel] = JSON.parse(undo.pop()); redraw(); } };
+            document.querySelectorAll(".len").forEach(b => b.onclick = () => { newLen = +b.dataset.len; redraw(); });
+            tname.addEventListener("input", () => { tune.name = tname.value; redraw(); });
+            tbpm.addEventListener("change", () => { snap(); tune.bpm = Math.min(900, Math.max(25, Math.round(+tbpm.value) || 120)); redraw(); });
+            fname.addEventListener("input", redraw);
+
+            // click a note to select it, drag it up or down to change the pitch; click a rest to select it
+            let drag = null;
+            const rollAt = e => { const r = roll.getBoundingClientRect(); return [(e.clientX - r.left) / PX, HI - Math.floor((e.clientY - r.top) / ROW)]; };
+            const beepNote = n => beep(n.p, Math.min(0.6, units(n) * 60 / tune.bpm / 8));
+            roll.addEventListener("pointerdown", e => {
+                const [u, p] = rollAt(e), st = startsOf(tune.notes);
+                const i = st.findIndex((s, k) => u >= s && u < s + units(tune.notes[k]));
+                if (i < 0) { sel = tune.notes.length - 1; redraw(); return; }  // behind the last note
+                sel = i;
+                const n = tune.notes[i];
+                if (n.p !== null) {
+                    beepNote(n);
+                    if (Math.abs(n.p - p) <= 1) { snap(); drag = i; roll.setPointerCapture(e.pointerId); }
+                }
+                redraw();
+            });
+            roll.addEventListener("pointermove", e => {
+                if (drag === null) return;
+                const p = Math.min(HI, Math.max(LO, rollAt(e)[1])), n = tune.notes[drag];
+                if (p !== n.p) { n.p = p; beep(p, 0.12); redraw(); }
+            });
+            const endDrag = () => drag = null;
+            roll.addEventListener("pointerup", endDrag); roll.addEventListener("pointercancel", endDrag);
+
+            // play / stop, from the selected note if there is one
+            const playBtn = $("t-play");
+            function togglePlay() {
+                if (playing && playBtn.dataset.on) { stopTune(); endPlay(); return; }
+                if (!tune.notes.length) return;
+                playBtn.textContent = "Stop"; playBtn.dataset.on = "1";
+                playTune(tune, sel > 0 && sel < tune.notes.length - 1 ? sel : 0, (i, pos) => { playingAt = i; playHead = pos; redraw(); }, endPlay);
+            }
+            function endPlay() { playBtn.textContent = "Play"; delete playBtn.dataset.on; playingAt = -1; playHead = null; redraw(); }
+            playBtn.onclick = togglePlay;
+
+            // ---------------------------------------------------------------- keyboard
+            // octaves 4..7, the four the phone can play
+            const piano = $("piano"), keyEls = {};
+            const WHITE = [0, 2, 4, 5, 7, 9, 11], NWHITE = (OCT_MAX - OCT_MIN + 1) * 7;
+            for (let oc = OCT_MIN; oc <= OCT_MAX; oc++) for (let s = 0; s < 12; s++) {
+                const p = (oc + 1) * 12 + s, black = !WHITE.includes(s), k = document.createElement("button");
+                const wi = (oc - OCT_MIN) * 7 + WHITE.filter(w => w < s).length;   // white keys to the left
+                k.className = "key " + (black ? "black" : "white");
+                k.style.left = black ? "calc(" + (wi / NWHITE * 100) + "% - 1.1%)" : (wi / NWHITE * 100) + "%";
+                k.setAttribute("aria-label", noteName(p).toUpperCase());
+                k.tabIndex = -1;
+                k.innerHTML = '<span class="hk"></span>' + (s === 0 ? '<span class="nm">C' + oc + "</span>" : "");
+                k.addEventListener("pointerdown", e => { e.preventDefault(); insert(p); flash(p); });
+                piano.appendChild(k); keyEls[p] = k;
+            }
+            function flash(p) { const k = keyEls[p]; if (!k) return; k.classList.add("down"); setTimeout(() => k.classList.remove("down"), 150); }
+
+            // computer keys by physical position (works on QWERTZ and QWERTY), labels as printed on a German keyboard.
+            // lower row = octave 5, upper row = octave 6
+            const KEYMAP = [["KeyZ", "Y"], ["KeyS", "S"], ["KeyX", "X"], ["KeyD", "D"], ["KeyC", "C"], ["KeyV", "V"], ["KeyG", "G"],
+                ["KeyB", "B"], ["KeyH", "H"], ["KeyN", "N"], ["KeyJ", "J"], ["KeyM", "M"], ["Comma", ","],
+                ["KeyQ", "Q"], ["Digit2", "2"], ["KeyW", "W"], ["Digit3", "3"], ["KeyE", "E"], ["KeyR", "R"], ["Digit5", "5"],
+                ["KeyT", "T"], ["Digit6", "6"], ["KeyY", "Z"], ["Digit7", "7"], ["KeyU", "U"], ["KeyI", "I"]];
+            const SEMI = { Comma: 12 }; // Comma and KeyQ are both the next C
+            KEYMAP.forEach(([code], i) => { if (!(code in SEMI)) SEMI[code] = i < 13 ? i : i - 1; });
+            const keyPitch = code => code in SEMI ? 72 + SEMI[code] : null;
+            function labelKeys() {
+                for (const [code, label] of KEYMAP) {
+                    const k = keyEls[keyPitch(code)];
+                    if (k && !k.firstChild.textContent) k.firstChild.textContent = label;
+                }
+            }
+            labelKeys();
+            document.addEventListener("keydown", e => {
+                const tag = document.activeElement.tagName;
+                if ($("ringtone").hidden || tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.altKey) return;
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); $("t-undo").click(); return; }
+                if (e.ctrlKey || e.metaKey || e.repeat) return;
+                const k = e.key.toLowerCase(), p = keyPitch(e.code);
+                if (p !== null && p >= LO && p <= HI) { e.preventDefault(); insert(p); flash(p); }
+                else if (e.code === "KeyP") { e.preventDefault(); insert(null); }
+                else if (k === ".") { e.preventDefault(); $("s-dot").click(); }
+                else if (k === "backspace" || k === "delete") { e.preventDefault(); $("s-del").click(); }
+                else if (k === "arrowleft") { e.preventDefault(); sel = Math.max(-1, sel - 1); redraw(); }
+                else if (k === "arrowright") { e.preventDefault(); sel = Math.min(tune.notes.length - 1, sel + 1); redraw(); }
+                else if (k === " ") { e.preventDefault(); togglePlay(); }
+            });
+
+            // ---------------------------------------------------------------- text box
+            rtttlEl.addEventListener("focus", () => snap());
+            rtttlEl.addEventListener("input", () => {
+                typing = true;
+                try {
+                    tune = rtttlEl.value.trim() ? parseRtttl(rtttlEl.value) : emptyTune(tune.bpm); sel = Math.min(sel, tune.notes.length - 1);
+                    $("rtttlerr").textContent = ""; redraw();
+                } catch (err) { $("rtttlerr").textContent = err; }
+            });
+            rtttlEl.addEventListener("blur", () => { typing = false; redraw(); });
+
+            // ---------------------------------------------------------------- out
+            function download(data, name, type) {
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([data], { type }));
+                a.download = name; document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+            }
+            $("dl-txt").onclick = () => download(toRtttl(tune) + "\n", safeName() + ".txt", "text/plain");
+            $("dl-wav").onclick = () => download(wavBytes(tune), safeName() + ".wav", "audio/wav");
+            $("copy").onclick = e => {
+                const b = e.currentTarget;
+                navigator.clipboard.writeText(toRtttl(tune)).then(() => { b.textContent = "Copied!"; setTimeout(() => b.textContent = "Copy text", 1200); });
+            };
+
+            // ---------------------------------------------------------------- MIDI upload
+            let midi = null, midiBase = "";
+            const info = $("convinfo"), voiceSel = $("o-voice");
+            $("midifile").addEventListener("change", e => {
+                const f = e.target.files[0];
+                if (!f) return;
+                f.arrayBuffer().then(buf => {
+                    try { midi = parseMidi(new Uint8Array(buf)); } catch (err) { midi = null; $("opts").hidden = true; info.textContent = err; return; }
+                    if (!midi.notes.length) { midi = null; $("opts").hidden = true; info.textContent = "No notes in that file."; return; }
+                    midiBase = f.name.replace(/\.[^.]*$/, "");
+                    $("midiname").textContent = f.name;
+                    const v = voicesOf(midi.notes), auto = pickVoice(v);
+                    voiceSel.innerHTML = "";
+                    const opt = (val, text) => { const o = document.createElement("option"); o.value = val; o.textContent = text; voiceSel.appendChild(o); };
+                    const label = k => {
+                        const ns = v.get(k), [t, ch] = k.split(":").map(Number), ps = ns.map(n => n.p);
+                        return "track " + t + ", ch " + (ch + 1) + ": " + ns.length + " notes, " + noteName(Math.min(...ps)) + "-" + noteName(Math.max(...ps))
+                            + (midi.names[t] ? ", " + midi.names[t] : "") + (ch === GM_DRUMS ? " (drums)" : "");
+                    };
+                    opt("auto", "auto: " + label(auto));
+                    [...v.keys()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).forEach(k => opt(k, label(k)));
+                    $("opts").hidden = false;
+                    runConvert();
+                });
+            });
+            function runConvert() {
+                if (!midi) return;
+                try {
+                    const r = convert(midi, {
+                        voice: voiceSel.value, start: Math.max(0, +$("o-start").value || 0), max: Math.max(1, Math.round(+$("o-max").value) || 60),
+                        transpose: Math.round(+$("o-tr").value) || 0, bpm: Math.round(+$("o-bpm").value) || 0
+                    });
+                    snap();
+                    tune = { name: safeTitle(midiBase), bpm: Math.min(900, Math.max(25, r.bpm)), notes: r.notes };
+                    sel = tune.notes.length - 1; fname.value = midiBase.replace(/[^A-Za-z0-9_-]/g, "-") || "my-tone";
+                    const [t, ch] = r.key.split(":").map(Number);
+                    info.textContent = "Melody from track " + t + ", channel " + (ch + 1) + ". " + r.count + " of " + r.total + " notes, " + tune.bpm + " bpm"
+                        + (r.folded ? ", " + r.folded + " notes moved by an octave to fit." : ".") + " Have a listen below.";
+                    redraw();
+                } catch (err) { info.textContent = err; }
+            }
+            $("convert").onclick = runConvert;
+
+            document.addEventListener("toolshown", e => { if (e.detail === "ringtone") redraw(); });
+            drawRollKeys($("rollkeys"), ROW);
+            redraw();
+            window.getRingtone = () => tune.notes.length ? toRtttl(tune) : "";
+        })();
+        showTab(location.hash.slice(1));
+    </script>
+
+    <script>
+        // ================================================================ send to a phone
+        // Only when the page comes from nokia_sms_server.py: opened as a file, /api/status isn't there
+        // and the send boxes stay hidden.
+        (() => {
+            if (location.protocol === "file:") return;
+            const left = n => n === null ? "" : n === 1 ? " 1 SMS left today." : " " + n + " SMS left today.";
+            fetch("api/status", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(st => {
+                if (!st) return;
+                document.querySelectorAll(".send").forEach(box => setup(box, st));
+            }).catch(() => { });
+
+            function setup(box, st) {
+                const kind = box.dataset.kind, form = box.querySelector("form"), info = box.querySelector(".sendinfo");
+                const btn = form.querySelector("button"), number = form.elements.number;
+                box.hidden = false;
+                number.placeholder = st.country ? "e.g. 0151 2345678" : "e.g. +44 7700 900123";
+                if (st.password) form.querySelector(".pwfield").hidden = false;
+                const sel = form.elements.network, other = form.querySelector(".netother");
+                if (sel) {
+                    const opt = (v, t) => { const o = document.createElement("option"); o.value = v; o.textContent = t; sel.appendChild(o); };
+                    if (st.networks.length) opt("", "pick one\u2026");
+                    st.networks.forEach(n => opt(n.code, n.name + " (" + n.code + ")"));
+                    opt("other", st.networks.length ? "Other: type the code" : "Type the code");
+                    const sync = () => other.hidden = sel.value !== "other";
+                    sel.onchange = sync; sync();
+                }
+                info.textContent = st.remaining === 0 ? "No SMS left today, come back tomorrow." : left(st.remaining).trim();
+                btn.disabled = st.remaining === 0;
+
+                form.onsubmit = async e => {
+                    e.preventDefault();
+                    const body = { kind, number: number.value.trim(), website: form.elements.website.value };
+                    if (st.password) body.password = form.elements.password.value;
+                    if (kind === "logo") {
+                        body.network = sel.value === "other" ? form.elements.netcode.value.trim() : sel.value;
+                        body.art = window.getLogoArt();
+                        if (!body.network) { info.textContent = "Pick the network of the SIM card in that phone."; return; }
+                        if (!body.art.includes("#")) { info.textContent = "The logo is empty, paint something first."; return; }
+                    } else {
+                        body.rtttl = window.getRingtone();
+                        if (!body.rtttl) { info.textContent = "The ringtone is empty, play some notes first."; return; }
+                    }
+                    if (!body.number) { info.textContent = "Type the phone number first."; return; }
+                    btn.disabled = true; info.textContent = "Sending\u2026 this can take up to a minute.";
+                    try {
+                        const r = await fetch("api/send", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+                        const d = await r.json();
+                        info.textContent = (d.ok ? "Sent! Have a look at the phone." : d.error) + left(d.remaining === undefined ? null : d.remaining);
+                        btn.disabled = d.remaining === 0;
+                    } catch (_) {
+                        info.textContent = "Couldn't reach the server. Try again later.";
+                        btn.disabled = false;
+                    }
+                };
+            }
+        })();
+    </script>
+</body>
+
+</html>
