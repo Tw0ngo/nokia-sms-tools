@@ -1,107 +1,96 @@
 # Nokia logo & ringtone tools
 
-Remember when you could change the network name on your Nokia's start screen into a little
-picture, or get a new ringtone by SMS? Old Nokias (3310, 7110, 6210, 8210, 3410 and friends) still
-understand those messages. This lets you make your own and send them.
+Tools for creating operator logos and ringtones for older Nokia phones and sending them by SMS
+(Nokia Smart Messaging). Supported by most Nokia models of the late 1990s and early 2000s,
+e.g. 3310, 3410, 6210, 7110, 8210.
 
-## Just making logos and ringtones
+## Creating logos and ringtones
 
-Download **[`web/index.html`](web/index.html)** (open it, then "Download raw file") and open it
-in your browser. That's it: no installing, no account, works offline.
+Download [`web/index.html`](web/index.html) ("Download raw file" on the file page) and open it in a
+web browser. No installation is required and it works offline.
 
-**Operator logo**: paint a 72×14 pixel picture, see right away how it looks on the phone, or
-start from one of 47 classic logos from back in the day. Download it as `.bmp`.
+- **Operator logo:** a 72×14 pixel editor with a phone display preview and 47 classic logos as
+  templates. Export as `.bmp` or `.art` (text).
+- **Ringtone:** import a MIDI file (the melody is selected automatically) or enter notes on the
+  on-screen or computer keyboard. Includes playback, a piano-roll editor and a check whether the
+  ringtone fits into a single SMS. Export as RTTTL text or `.wav`.
 
-**Ringtone**: drop in a MIDI file and it picks out the melody for you, or play one in on the
-on-screen piano (your computer keyboard works too). Listen to it, fix notes, and see whether it
-still fits into one SMS. Download it as RTTTL text (the classic ringtone format) or as `.wav`.
+## Sending them by SMS
 
-## Actually sending them to a phone
+Sending requires additional hardware:
 
-For that you need a **second old phone that can send SMS from a computer**, and a computer that
-stays on, like a Raspberry Pi or an old laptop with Linux.
+- **A sending phone** connected by USB that can be used as a GSM modem (tested: Nokia 6230i;
+  most phones with a USB data cable should work). Its SIM card pays for the messages: each logo
+  or ringtone is charged as one regular SMS.
+- **A receiving phone** that supports operator logos or ringtones by SMS (tested: Nokia 7110).
+- **A Linux computer** that stays switched on, e.g. a Raspberry Pi.
 
-What you need:
-- **A phone connected by USB that works as a modem.** Tested with a Nokia 6230i. Most Nokias with a
-  USB data cable from the mid-2000s should do, many other phones too. It needs a SIM card with credit:
-  **every logo or ringtone you send costs as much as a normal SMS**, paid by that SIM.
-- **The phone that receives it**: the old Nokia you want to put the logo or ringtone on.
-  Tested with a Nokia 7110.
-- **A computer with Linux** (e.g. Raspberry Pi OS, Debian, Ubuntu).
+### Installation
 
-### Setting it up
+1. Connect the sending phone by USB and switch it on.
+2. Download the project (**Code → Download ZIP** and unpack it, or
+   `git clone https://github.com/Tw0ngo/nokia-sms-tools`) and open a terminal in the folder.
+3. Run `sudo ./install.sh`.
+4. The installer prints the address of the web page, e.g. `http://192.168.1.20:8095`. It can be
+   opened from any device on the local network and contains the same tools, plus a form to send
+   the logo or ringtone.
 
-1. Plug the sending phone into the computer and switch it on.
-2. Download this project: click the green **Code** button above → **Download ZIP**, unpack it,
-   and open a terminal in that folder. Or with git: `git clone https://github.com/Tw0ngo/nokia-sms-tools`
-3. Run:
-   ```
-   sudo ./install.sh
-   ```
-4. At the end it shows you an address like `http://192.168.1.20:8095`. Open it in a browser on
-   any computer or phone in your home network. It's the same page as above, now with a
-   **"Send it to a phone"** box under the logo and the ringtone.
+### Configuration
 
-### Settings
+The settings are in `/etc/nokia-sms/config.ini`; each option is described in the file. Apply
+changes with `sudo systemctl restart nokia-sms`.
 
-All settings are in one file, with explanations right next to them:
-```
-sudo nano /etc/nokia-sms/config.ini
-sudo systemctl restart nokia-sms      # afterwards, so the changes count
-```
-
-What you can set there:
-
-| Setting | What it does |
+| Option | Description |
 |---|---|
-| `home_country` | Your country's calling code (e.g. `49` for Germany), so people can type numbers the way they always do, `0151…` instead of `+49 151…`. |
-| `allow` | Only send to these numbers. You can list whole countries (`+49 +43`) or just your friends' numbers. Empty means anyone. |
-| `block` | Never send to these numbers, e.g. expensive service numbers, or someone who doesn't want any more SMS. |
-| `sms_per_day` | How many SMS all together per day. Your SIM pays for them, so the default is 20. |
-| `sms_per_number_per_day` | How many per receiving number per day (default 3), so nobody gets spammed. |
-| `password` | If you set one, people need it to send. Painting and downloading still work without it. A must if you put the page on the internet. |
-| `networks` | The networks offered in a list for logos (see below). People can always type in a code themselves. |
+| `home_country` | Country calling code (e.g. `49`). Allows numbers in national format (`0151…`). If empty, numbers must be entered with `+`. |
+| `allow` | Only send to numbers starting with these prefixes, e.g. whole countries (`+49 +43`) or individual numbers. Empty: no restriction. |
+| `block` | Never send to numbers starting with these prefixes, e.g. premium-rate numbers or people who have opted out. Takes precedence over `allow`. |
+| `sms_per_day` | Maximum number of SMS per day in total (default 20). `0` disables the limit. |
+| `sms_per_number_per_day` | Maximum number of SMS per receiving number per day (default 3). `0` disables the limit. |
+| `password` | Optional. If set, it is required for sending; the editors remain usable without it. Recommended if the page is reachable from the internet. |
+| `networks` | Networks listed in the logo form. Other network codes can always be entered manually. |
+| `device` | The phone's serial port. `auto` detects it; set it manually if several devices are connected. |
+| `listen` | Address and port of the web server (default `0.0.0.0:8095`, i.e. reachable on the local network). |
 
-The server doesn't save phone numbers. To count the per-number limit it only keeps a scrambled
-fingerprint that can't be turned back into the number and is thrown away every night.
+Phone numbers are not stored. The per-number limit uses a keyed hash whose key is replaced daily.
 
-### Why the logo needs the "network"
+### Network codes for operator logos
 
-An operator logo is always meant for one network. The phone only shows it if it matches the
-network of its SIM card, otherwise it just ignores it. That's why the page asks which network
-the receiving phone is on. The code has two parts, the country and the network, e.g. `262 01`
-for Telekom in Germany. You can find yours on
-[this list](https://en.wikipedia.org/wiki/Mobile_country_code) or in the phone's network
-selection menu. Ringtones work on any network.
+An operator logo is tied to a network and is only displayed if it matches the network of the SIM
+card in the receiving phone. The network is identified by its country code (MCC) and network code
+(MNC), e.g. `262 01` for Telekom Germany. Codes are listed on
+[Wikipedia](https://en.wikipedia.org/wiki/Mobile_country_code) and usually shown in the phone's
+network selection menu. Ringtones are not tied to a network.
 
-### When something doesn't work
+### Troubleshooting
 
-- **"No phone found"**: is the phone switched on and plugged in? `ls /dev/serial/by-id/` should list
-  it. If there are several, put the right one under `device` in the settings.
-- **"The phone didn't manage to send it"**: is there credit on the SIM? Does the phone have signal?
-  `journalctl -u nokia-sms -n 30` shows what the phone answered.
-- **The logo arrives but doesn't show up**: the network code doesn't match the receiving SIM.
-- **The ringtone doesn't arrive**: it has to fit into one SMS. The bar under the ringtone shows how full it is.
+- **"No phone found":** check that the phone is switched on and connected; `ls /dev/serial/by-id/`
+  should list it.
+- **Sending fails:** check the SIM credit and signal. `journalctl -u nokia-sms -n 30` shows the
+  phone's response.
+- **Logo received but not displayed:** the network code does not match the receiving SIM card.
+- **Ringtone not received:** it must fit into one SMS; the editor shows the current size.
 
-## For tinkerers: command-line tools
+## Command-line tools
 
-The [`cli/`](cli) folder has the same things for the terminal, sending with
-[gammu](https://wammu.eu/gammu/) (`sudo apt install gammu console-setup-linux`):
+The [`cli/`](cli) folder contains equivalent tools for the terminal. Sending uses
+[gammu](https://wammu.eu/gammu/); install the dependencies with
+`sudo apt install gammu console-setup-linux`.
 
 ```sh
 cd cli
-./makelogo.py --text "HELLO" -o logo.bmp                 # logo from text
-./makelogo.py --art examples/vorlage.art -o logo.bmp     # from a text drawing: 14 lines of 72 characters, # = black
-./compose.py -o logo.bmp art:examples/stern.art gap:4 text:HELLO     # picture and text side by side
-sudo ./send-logo.sh +4915112345678 "262 01" logo.bmp     # number, network of the receiving SIM, logo
+./makelogo.py --text "HELLO" -o logo.bmp                          # logo from text
+./makelogo.py --art examples/vorlage.art -o logo.bmp              # from a text drawing (14 lines of 72 characters, # = black)
+./compose.py -o logo.bmp art:examples/hammer-sichel.art gap:6 text:HELLO   # image and text combined
+sudo ./send-logo.sh +4915112345678 "262 01" logo.bmp              # number, network of the receiving SIM, logo
 
-./midi2rtttl.py song.mid -o song.txt --wav song.wav      # MIDI to ringtone (--list shows the tracks)
-sudo ./send-ringtone.sh +4915112345678 song.txt
+./midi2rtttl.py song.mid -o song.txt --wav song.wav               # MIDI to RTTTL (--list shows the tracks)
+sudo ./send-ringtone.sh +4915112345678 examples/internationale.txt
 ```
 
-They use the same phone as the web page. If one of them says the phone is busy, just try again
-a moment later.
+The command-line tools and the web server use the same phone. If a send fails because the phone
+is busy, retry after a moment.
 
 ## License
 
-MIT: do whatever you like with it, just keep the [LICENSE](LICENSE) file.
+MIT, see [LICENSE](LICENSE).
